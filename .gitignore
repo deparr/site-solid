@@ -1,0 +1,22 @@
+dist
+.wrangler
+.output
+.vercel
+.netlify
+.vinxi
+app.config.timestamp_*.js
+
+# Environment
+.env
+.env*.local
+
+# dependencies
+/node_modules
+
+# Temp
+gitignore
+
+src/generated/*
+!src/generated/.gitkeep
+scripts/ts-data/wasm/*
+!scripts/ts-data/wasm/.gitkeep

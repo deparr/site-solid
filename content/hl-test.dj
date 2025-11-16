@@ -1,0 +1,405 @@
+```=meta
+title=Highlight Test
+template = base
+```
+
+Code Highlight Test Page
+
+
+*Bash*
+
+```bash
+#!/usr/bin/bash
+
+exclude=( install.sh setup.sh )
+bins=$HOME/.config/bin
+target=$HOME/.local/bin
+
+is_in () {
+    local ck=$1
+    shift
+    local arr=("$@")
+    for val in "${arr[@]}"; do
+        [[ "$val" == "$ck" ]] && return 1
+    done
+
+    return 0
+}
+
+echo "moving to $target..."
+
+for s in $bins/*; do
+    is_in "${s##*/}" "${exclude[@]}"
+    if [[ "$?" == "0" ]]; then
+        cp $s $target
+    fi
+done
+
+echo "done"
+```
+
+*C*
+
+```c
+#include <stdio.h>
+#include "header.h"
+
+#define TEST
+#ifdef TEST
+#endif
+
+/**
+ * TNode
+ */
+struct TNode {
+    int val;
+    struct TNode *left;
+    struct TNode *right;
+};
+
+typedef struct LNode {
+    int val;
+    LLNode *next;
+} LLNode;
+
+enum days { M, T, W, H, F, S, U };
+
+void func() {
+}
+
+// main function
+int main() {
+    LLNode *head = NULL;
+    head = (LLNode*)malloc(sizeof(LLNode));
+    head->val = 100;
+
+    if (true) {
+        head->val = 200;
+    } else {
+        head->val -= 5;
+    }
+
+    int v = head->val;
+
+    char *string = "some string\n";
+    char c = 'c';
+
+    func();
+}
+```
+
+*Lua*
+
+```lua
+---@param code table
+---@param lang string
+local function highlight_code(code, lang)
+  local tohtml = require("tohtml").tohtml
+  htmlbufnr = vim.api.nvim_buf_is_valid(htmlbufnr) and htmlbufnr
+    or vim.api.nvim_create_buf(true, true)
+  htmlwinnr = vim.api.nvim_win_is_valid(htmlwinnr) and htmlwinnr
+    or vim.api.nvim_open_win(htmlbufnr, false, { split = "right" })
+
+  vim.api.nvim_buf_set_lines(
+    htmlbufnr,
+    0,
+    -1,
+    false,
+    type(code) == "string" and vim.split(code, "\n") or code
+  )
+  vim.bo[htmlbufnr].filetype = lang
+  local html = tohtml(htmlwinnr, {})
+
+  local style_start = html[7]
+  assert(vim.startswith(style_start, "<style>"), "bad style tag pos")
+  local styles = {}
+
+  for i = 8, #html do
+    local s = html[i]
+    if s == "</style>" then
+      break
+    end
+    local match = s:find("font%-family") or s:find("^%.%-spell") or s:find("^body")
+    if match == nil and not vim.tbl_contains(styles, s) then
+      table.insert(styles, s)
+    end
+  end
+
+  local pre_start = 7 + #styles + 1
+  while pre_start < #html do
+    local s = html[pre_start]
+    if s == "<pre>" then
+      break
+    end
+    pre_start = pre_start + 1
+  end
+
+  local blocks = {}
+  for i = pre_start + 1, #html do
+    local s = html[i]
+    if s == "</pre>" then
+      break
+    end
+
+    table.insert(blocks, s)
+  end
+
+  if blocks[#blocks] == "" then
+    blocks[#blocks] = nil
+  end
+
+  for i, v in ipairs(blocks) do
+    blocks[i] = ('<span class="line">%s</span>'):format(v)
+  end
+
+  table.insert(blocks, 1, "<code>")
+  table.insert(blocks, 1, "<pre>")
+  table.insert(blocks, 1, '<figure class="code-block">')
+
+  table.insert(blocks, "</code>")
+  table.insert(blocks, "</pre>")
+  table.insert(blocks, "</figure>")
+
+  local rendered = vim.trim(vim.iter(blocks):join("\n"))
+
+  return rendered, styles
+end
+```
+
+*GDScript*
+
+```gdscript
+extends CharacterBody2D
+
+signal direction_changed(new_direction: Vector2)
+
+@export var gravity := 4000.0
+@onready var rewind_anchor: Node = $RewindAnchor
+@onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var anim_player: AnimatedSprite2D = $AnimatedSprite2D: get = get_anim_player
+
+var look_direction := Vector2.RIGHT:
+	set(value):
+		look_direction = value
+		set_look_direction(value)
+
+var rewind_pos := PackedVector2Array()
+
+func _ready() -> void:
+	RewindManager.rewind_pop.connect(_rewind)
+	RewindManager.rewind_push.connect(_rewind_push)
+	RewindManager.rewind_count_change.connect(_rewind_count_change)
+
+func set_dead(value: bool) -> void:
+	set_process_input(not value)
+	set_physics_process(not value)
+	$CollisionShape2D.disabled = value
+
+func set_look_direction(value: Vector2) -> void:
+	direction_changed.emit(value)
+
+func _rewind() -> void:
+	var idx := rewind_pos.size() - 1
+	set_deferred("position", rewind_pos[idx])
+	rewind_pos.remove_at(idx)
+	# var child := rewind_anchor.get_child(-1)
+	# rewind_anchor.remove_child(child)
+	# child.queue_free()
+
+func _rewind_push() -> void:
+	rewind_pos.push_back(position)
+
+
+func _rewind_count_change(count: int) -> void:
+	rewind_pos.resize(count)
+
+func get_anim_player() -> AnimatedSprite2D:
+	return anim_player if anim_player else get_node(^"AnimatedSprite2D")
+```
+
+
+*Go*
+
+```go
+package main
+
+import (
+    "fmt"
+    "math"
+)
+
+type Dir int
+const (
+    north Dir = iota
+    east
+    south
+    west
+)
+
+// main entity type
+type Entity struct {
+    Pos struct {
+        X float64
+        Y float64
+    }
+    Dir Dir
+    Id int
+}
+
+func (e *Entity) distTo(other *Entity) float64 {
+    yy, xx := other.Pos.Y - e.Pos.Y, other.Pos.X - e.Pos.X
+    return math.Sqrt(yy*yy + xx*xx)
+}
+
+func main() {
+    e := &Entity{}
+    switch (e.Dir) {
+    case north:
+        fmt.Println("Facing north")
+    case east:
+        fmt.Println("Facing east")
+    case south:
+        fmt.Println("Facing south")
+    case west:
+        fmt.Println("Facing west")
+    default:
+        fmt.Println("unknown dir")
+    }
+
+    events := make(chan Entity, 20)
+
+    go func() {
+        event <- events
+        fmt.Println("got some event")
+    }()
+}
+```
+
+*Rust*
+
+```rust
+use std::sync::{mpsc, Arc, Mutex};
+use std::thread;
+
+/// a naive thread pool 
+
+pub struct ThreadPool {
+    workers: Vec<Worker>,
+    sender: Option<mpsc::Sender<Job>>,
+}
+
+impl ThreadPool {
+    pub fn new(size: usize) -> ThreadPool {
+        assert!(size > 0);
+
+        let (sender, receiver) = mpsc::channel();
+
+        let receiver = Arc::new(Mutex::new(receiver));
+
+        let mut workers = Vec::with_capacity(size);
+
+        for id in 0..size {
+            workers.push(Worker::new(id, Arc::clone(&receiver)));
+        }
+
+        return ThreadPool { workers, sender: Some(sender) };
+    }
+
+    pub fn execute<F>(&self, f: F)
+    where
+        F: FnOnce() + Send + 'static,
+    {
+        let job = Box::new(f);
+
+        self.sender.as_ref().unwrap().send(job).unwrap();
+    }
+}
+
+impl Drop for ThreadPool {
+    fn drop(&mut self) {
+        drop(self.sender.take());
+
+        for worker in &mut self.workers {
+            println!("Shutting down worker {}", worker.id);
+
+            if let Some(thread) = worker.thread.take() {
+                thread.join().unwrap();
+            }
+        }
+    }
+}
+
+#[derive(Debug)]
+struct Worker {
+    id: usize,
+    thread: Option<thread::JoinHandle<()>>,
+}
+
+impl Worker {
+    fn new(id: usize, receiver: Arc<Mutex<mpsc::Receiver<Job>>>) -> Worker {
+        let thread = thread::spawn(move || loop {
+            let msg = receiver.lock().unwrap().recv();
+            match msg {
+                Ok(job) => {
+                    println!("Worker {id} got a job; executing");
+                    job();
+                }
+                Err(_) => {
+                    println!("Worker {id} disconnected; shutting down.");
+                    break;
+                }
+            }
+        });
+        Worker {
+            id,
+            thread: Some(thread),
+        }
+    }
+}
+```
+
+*Zig*
+
+```zig
+//! toplevel doc
+
+const std = @import("std");
+
+/// which direction a entity can face
+const Dir = enum {
+    north,
+    east,
+    south,
+    west,
+};
+
+const Entity = struct {
+    pos: struct { x: f32, y: f32 },
+    id: usize = 0,
+    dir: Dir = .north,
+
+    pub fn dist_to(self: *const Entity, other: *const Entity) f32 {
+        const yy = other.pos.y - self.pos.y;
+        const xx = other.pos.x - self.pos.x;
+        return @sqrt(yy * yy + xx * xx);
+    }
+}
+
+pub fn main() !void {
+    const stdout = std.io.getStdOut().writer();
+    try stdout.print("Hello, {}!\n", .{"world"});
+    const current_dir = .east;
+    var day = switch(current_day) {
+        .north => "North",
+        .east => "East",
+        .south => "South",
+        .west => "West",
+    }
+    var maybe_direction: ?Dir = null;
+    const target = std.Target.current.os.tag;
+    var entity_pool: []*Entity = undefined;
+    var c = 'c';
+    var x = 0xc0ffee;
+    var a = @fieldParentPtr("somefield", stdout);
+}
+```
