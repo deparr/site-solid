@@ -2,6 +2,7 @@ import { parse, renderHTML, applyFilter, type Link, Section, CodeBlock, RawBlock
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { Language, Parser, Query, QueryCapture } from "web-tree-sitter";
+import { HighlightDef, tresitterDefinitions, TSCaptureGroup } from "./syntax";
 
 // don't like double declaring types here but
 // tags?
@@ -356,11 +357,42 @@ export function getAllContent(renderDrafts: boolean): { content: DjotContent[], 
     return { content: pages, highlights };
 }
 
+function generateHighlightCss(highlights: Set<string>): string {
+    const hlCmp = (a: any, b: any) => (a.name == b.name ? 0 : a.name < b.name ? -1 : 1);
+    const hlDefinitions = {
+        light: Array.from(highlights.entries(), (v: string[]) => ({ name: v[0], def: tresitterDefinitions.light[v[0] as TSCaptureGroup] })),
+        dark: Array.from(highlights.entries(), (v: string[]) => ({ name: v[0], def: tresitterDefinitions.dark[v[0] as TSCaptureGroup] })),
+    };
+    hlDefinitions.light.sort(hlCmp);
+    hlDefinitions.dark.sort(hlCmp);
+    const lines: string[] = [];
+    const transformLine = (entry: { name: string, def: HighlightDef }) => {
+        const { name, def } = entry;
+        const line = [`.hl-${name.replaceAll(".", "-").trim()} {`];
+        if (def.fg) line.push(`color: ${def.fg};`);
+        if (def.bg) line.push(`background-color: ${def.fg};`);
+        if (def.bold) line.push("font-weight: bold;");
+        if (def.italic) line.push("font-style: italic;");
+        if (def.underline) line.push("text-decoration: underline;");
+        if (def.strikethrough) line.push("text-decoration: line-through;");
+        if (def.sp) line.push(`text-decoration-color: ${def.sp};`);
+        line.push("}");
+        lines.push(line.join(" "));
+    };
+    hlDefinitions.light.forEach(transformLine);
+    lines.push('\n[data-theme="dark"] {')
+    hlDefinitions.dark.forEach(transformLine);
+    lines.push("}");
+
+    return lines.join("\n");
+}
+
 async function main() {
     const forceUpdate = process.argv.reduce((acc, s) => (acc || (s === "-f" || s === "--force-update")), false)
     const renderDrafts = process.argv.reduce((acc, s) => (acc || (s === "-d" || s === "--use-drafts")), false)
     await ensureParserDataExists(forceUpdate);
     const { content, highlights } = getAllContent(renderDrafts);
+    const highlightCss = generateHighlightCss(highlights);
     writeFileSync("src/generated/rendered-blog-posts.json", JSON.stringify(content, null, 2));
     writeFileSync(
         'src/generated/rendered-blog-posts.d.ts',
@@ -376,6 +408,7 @@ async function main() {
 declare const content: RenderedBlogPost[];
 export default content;`
     );
+    writeFileSync("public/css/highlight.css", highlightCss);
 }
 
 if (import.meta.main) main();
