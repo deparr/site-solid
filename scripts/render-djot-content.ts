@@ -9,6 +9,7 @@ export interface DjotContent {
     id: string;
     html: string;
     title: string;
+    tags: string[];
     description?: string;
     date?: string;
 }
@@ -343,6 +344,7 @@ export function getAllContent(renderDrafts: boolean): { content: DjotContent[], 
                     id,
                     html,
                     title: metadata.title ?? "{MISSING TITLE}",
+                    tags: metadata.tags?.split(",") ?? [],
                     description: metadata.description,
                     date: metadata.date,
                 });
@@ -366,6 +368,7 @@ async function main() {
     id: string;
     html: string;
     title: string;
+    tags: string[];
     description?: string;
     date?: string;
 }
