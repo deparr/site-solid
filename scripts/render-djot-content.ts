@@ -23,44 +23,58 @@ const parserSources: Record<string, ParserInfo> = {
     go: {
         wasm: "https://github.com/tree-sitter/tree-sitter-go/releases/download/v0.25.0/tree-sitter-go.wasm",
         queries: {
-            highlights: "https://raw.githubusercontent.com/nvim-treesitter/nvim-treesitter/refs/heads/master/queries/go/highlights.scm"
+            highlights: "https://raw.githubusercontent.com/nvim-treesitter/nvim-treesitter/refs/heads/main/runtime/queries/go/highlights.scm"
         }
     },
     c: {
         wasm: "https://github.com/tree-sitter/tree-sitter-c/releases/download/v0.24.1/tree-sitter-c.wasm",
         queries: {
-            highlights: "https://raw.githubusercontent.com/nvim-treesitter/nvim-treesitter/refs/heads/master/queries/c/highlights.scm"
+            highlights: "https://raw.githubusercontent.com/nvim-treesitter/nvim-treesitter/refs/heads/main/runtime/queries/c/highlights.scm"
         }
     },
     bash: {
         wasm: "https://github.com/tree-sitter/tree-sitter-bash/releases/download/v0.25.0/tree-sitter-bash.wasm",
         queries: {
-            highlights: "https://raw.githubusercontent.com/nvim-treesitter/nvim-treesitter/refs/heads/master/queries/bash/highlights.scm"
+            highlights: "https://raw.githubusercontent.com/nvim-treesitter/nvim-treesitter/refs/heads/main/runtime/queries/bash/highlights.scm"
         }
     },
 
     rust: {
         wasm: "https://github.com/tree-sitter/tree-sitter-rust/releases/download/v0.24.0/tree-sitter-rust.wasm",
         queries: {
-            highlights: "https://raw.githubusercontent.com/nvim-treesitter/nvim-treesitter/refs/heads/master/queries/rust/highlights.scm"
+            highlights: "https://raw.githubusercontent.com/nvim-treesitter/nvim-treesitter/refs/heads/main/runtime/queries/rust/highlights.scm"
         }
     },
     // gdscript: {
     //     wasm: "https://github.com/tree-sitter/tree-sitter-gdscript/releases/download/v0.25.0/tree-sitter-gdscript.wasm",
     //     queries: {
-    //         highlights: "https://raw.githubusercontent.com/nvim-treesitter/nvim-treesitter/refs/heads/master/queries/gdscript/highlights.scm"
+    //         highlights: "https://raw.githubusercontent.com/nvim-treesitter/nvim-treesitter/refs/heads/main/queries/gdscript/highlights.scm"
     //     }
+    // },
+    // gdshader: {
+    //     // todo will need to figure out an easy way to get this
+    //     wasm: "https://github.com/airblast-dev/tree-sitter-gdshader/???",
+    //     queries: {
+    //         highlights: "https://raw.githubusercontent.com/nvim-treesitter/nvim-treesitter/refs/heads/main/queries/gdshader/highlights.scm"
+    //     }
+    // },
+    // typescript: {
+    //     wasm: "https://github.com/tree-sitter/tree-sitter-typescript/releases/download/v0.23.2/tree-sitter-typescript.wasm",
+    //     queries: {
+    //         // todo nvim ts inherits from ecma
+    //         highlights: "https://raw.githubusercontent.com/nvim-treesitter/nvim-treesitter/refs/heads/main/runtime/queries/typescript/highlights.scm"
+    //     },
     // },
     lua: {
         wasm: "https://github.com/tree-sitter-grammars/tree-sitter-lua/releases/download/v0.4.0/tree-sitter-lua.wasm",
         queries: {
-            highlights: "https://raw.githubusercontent.com/nvim-treesitter/nvim-treesitter/refs/heads/master/queries/lua/highlights.scm"
+            highlights: "https://raw.githubusercontent.com/nvim-treesitter/nvim-treesitter/refs/heads/main/runtime/queries/lua/highlights.scm"
         }
     },
     zig: {
         wasm: "https://github.com/tree-sitter-grammars/tree-sitter-zig/releases/download/v1.1.2/tree-sitter-zig.wasm",
         queries: {
-            highlights: "https://raw.githubusercontent.com/nvim-treesitter/nvim-treesitter/refs/heads/master/queries/zig/highlights.scm"
+            highlights: "https://raw.githubusercontent.com/nvim-treesitter/nvim-treesitter/refs/heads/main/runtime/queries/zig/highlights.scm"
         }
     },
 };
