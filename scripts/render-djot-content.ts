@@ -5,7 +5,6 @@ import { Language, Parser, Query, QueryCapture } from "web-tree-sitter";
 import { HighlightDef, tresitterDefinitions, TSCaptureGroup } from "./syntax";
 
 // don't like double declaring types here but
-// tags?
 export interface DjotContent {
     id: string;
     html: string;
@@ -16,9 +15,9 @@ export interface DjotContent {
 }
 
 interface ParserInfo {
-    wasm: string
+    wasm: string;
     queries?: {
-        highlights?: string
+        highlights?: string;
     }
 };
 const parserSources: Record<string, ParserInfo> = {
@@ -64,7 +63,7 @@ const parserSources: Record<string, ParserInfo> = {
     //     wasm: "https://github.com/tree-sitter/tree-sitter-typescript/releases/download/v0.23.2/tree-sitter-typescript.wasm",
     //     queries: {
     //         // todo nvim ts inherits from ecma
-    //         highlights: "https://raw.githubusercontent.com/nvim-treesitter/nvim-treesitter/refs/heads/main/runtime/queries/typescript/highlights.scm"
+    //         highlights: [ "https://raw.githubusercontent.com/nvim-treesitter/nvim-treesitter/refs/heads/main/runtime/queries/typescript/highlights.scm" ]
     //     },
     // },
     lua: {

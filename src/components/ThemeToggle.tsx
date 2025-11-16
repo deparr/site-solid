@@ -1,8 +1,6 @@
-import { createEffect, createSignal, createUniqueId, onMount } from "solid-js";
-import { useHead } from "@solidjs/meta";
+import { createEffect, createSignal, onMount } from "solid-js";
 
 import "./ThemeToggle.css";
-import readThemeLocal from "./read-theme-local.js?raw";
 
 export default function ThemeToggle() {
 
@@ -30,12 +28,13 @@ export default function ThemeToggle() {
     setTheme((prev) => prev === "dark" ? "light" : "dark");
   };
 
-  useHead({
-    tag: "script",
-    id: createUniqueId(),
-    props: { children: readThemeLocal },
-    setting: { close: true },
-  });
+  // do this in server-entry.tsx for now
+  // useHead({
+  //   tag: "script",
+  //   id: createUniqueId(),
+  //   props: { children: readThemeLocal },
+  //   setting: { close: true },
+  // });
 
   return (
     <button onclick={toggleTheme}>{theme() === "dark" ? "light" : "dark"}</button>
