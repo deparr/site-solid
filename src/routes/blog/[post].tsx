@@ -1,6 +1,5 @@
 import { Meta, Title } from "@solidjs/meta";
 import { useParams } from "@solidjs/router";
-import { HttpStatusCode } from "@solidjs/start";
 import { createMemo } from "solid-js";
 import blogPosts from "~/generated/rendered-blog-posts";
 import "./blog-post.css";
