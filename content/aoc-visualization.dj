@@ -1,0 +1,38 @@
+```=meta
+title = Visualizing Advent of Code Problems
+descrpition = Why does everything have to be harder than it looks :despair:
+alt_title = a
+date = December 4, 2025
+tags = blog-post
+```
+
+I see cool data and algorithm visualizations all the time,[^cool-vis-creators] but I've never really tried making any of my own.
+Today's [Advent of Code](https://adventofcode.com/2025/day/4) problem seemed to lend itself to visualization fairly well, so I decided to give it a shot!
+
+[^cool-vis-creators]: A few people who create great visualizations / animations:  [Sebastian Lauge](https://www.youtube.com/@SebastianLague), [Logan Smith](https://www.youtube.com/@_noisecode), [Freya Holmér](https://www.youtube.com/@acegikmo), [3Blue1Brown](https://www.youtube.com/@3blue1brown), [Acerola](https://www.youtube.com/@Acerola_t). check them out!
+
+## Harder than I thought
+
+Day 4 was a straight forward solve, so porting my zig solution to gdscript was quick.
+Wiring it up to a solve button and some simple drawings was also not too bad, but I knowingly cut a lot of corners.
+
+Timing and controlling execution of the subject code is a key part of good visualizations that I just hacked through by inserting oneshot timers in my main loop.
+This works _fine...ish_ on a problem like this, where the visual only needs to be updated once per iteration of the algorithm, but more complex problems would want a more granular way of updating the visuals.
+Something to think about for next time.
+
+I didn't want to spend hours on this so the visual itself is super rushed: an off-center grid of colored boxes that look bad because they're 16:9 not 1:1.
+There's no animation either; updates are immediate.
+
+Oh well, motivation to learn more Godot and graphics programming I guess.
+
+Maybe I'll try again if another aoc problem seems like an easy target.
+
+## Result
+
+![video of the solver visuals](/videos/aoc-2025-04.mp4)
+
+It looks pretty rough, but now I think I know what I need to work on for next time.
+
+[Source code](https://github.com/deparr/aoc/tree/main/2025/vis) for the visuals.
+
+Thanks for reading!

@@ -1,4 +1,4 @@
-import { parse, renderHTML, applyFilter, type Link, Section, CodeBlock, RawBlock } from "@djot/djot";
+import { parse, renderHTML, applyFilter, Link, Section, CodeBlock, RawBlock, Image } from "@djot/djot";
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { Language, Parser, Query, QueryCapture } from "web-tree-sitter";
@@ -332,6 +332,19 @@ export function getAllContent(renderDrafts: boolean): { content: DjotContent[], 
                         if (!el.attributes) return;
                         el.attributes.id = el.attributes.id.toLowerCase();
                     },
+                    image: (el: Image) => {
+                        // todo this adds empty p tags before and after the video
+                        //      might need to make a custom renderer
+                        const destination = el.destination ?? "";
+                        if (destination.toLowerCase().endsWith(".mp4")) {
+                            const title = el.attributes?.title ? `title="${el.attributes.title}"` : "";
+                            return {
+                                tag: "raw_inline",
+                                format: "html",
+                                text: `<figure><video controls muted=true src="${destination}"${title}></video></figure>`
+                            }
+                        }
+                    }
                 }));
                 const html = renderHTML(ast);
 

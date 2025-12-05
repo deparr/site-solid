@@ -21,7 +21,7 @@
     --accent: #e78c45;
     --error: #cc6666;
     --link: #81a2be;
-    --border: #fafafa;
+    --border: #7a7a7a;
     --border-code: #696969;
     --shadow: 200, 200, 200;
 
@@ -181,10 +181,13 @@ pre > code {
     font-size: 16px;
 }
 
+img {
+    border: 1px solid var(--border);
+}
+
 img, video {
     display: block;
     margin: 2rem auto 2rem;
-    border: 1px solid var(--border);
     max-width: 100%;
     height: auto;
 }

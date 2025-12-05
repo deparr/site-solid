@@ -12,7 +12,7 @@ I enjoy having a personal website.
 I don't enjoy Javascript front-end frameworks, especially for a site that's mostly static.
 I previously used Sveltekit for this site, and while it was nice, I've been wanting to move to something simpler.
 
-A couple of blogs I follow [^djot-blogs] have mentioned they use custom site
+A couple of blogs I follow[^djot-blogs] have mentioned they use custom site
 generators built around [Djot](https://djot.net), which got me interested in creating my own.
 At first I wanted to write my own Djot parser, to make highlighting code
 blocks easier (and better), but I dropped it a few hours in after it became unfun.
