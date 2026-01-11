@@ -22,8 +22,8 @@ export default function HomePage() {
       <h2 class="text-grad">Projects</h2>
 
       <ProjTitle name="gdfmt" link="deparr/gdfmt" />
-      <p>An attempt at making a formatter for Godot gdscript. The goal is to adhere to the <A target="_blank" href="https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_styleguide.html">style guide</A>
-        while allowing some options like quote style. Written in Zig, because why not?
+      <p>An attempt at making a formatter for Godot gdscript. The goal is to adhere to the <A target="_blank" href="https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_styleguide.html">style guide
+          </A> while allowing some options like quote style. Written in Zig, because why not?
       </p>
 
       <ProjTitle name="jolt.nvim" link="deparr/jolt.nvim" />

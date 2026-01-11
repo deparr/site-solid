@@ -26,7 +26,10 @@
     --shadow: 200, 200, 200;
 
     body::before {
-        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><g fill='white'><circle cx='40' cy='40' r='2'/></g></svg>");
+        /* background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><g fill='white'><circle cx='40' cy='40' r='2'/></g></svg>"); */
+        /* background-image: url("/images/background-dark.png"); */
+        /* do this instead of ^^ so background also transitions smoothly */
+        filter: invert(1.0);
     }
 }
 
@@ -77,10 +80,12 @@ body::before {
     width: 100%;
     height: 100%;
     z-index: -1;
-    background-color: var(--bg);
-    background-size: 80px 80px;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><g fill='black'><circle cx='40' cy='40' r='2'/></g></svg>");
-    animation: backgroundScroll 120s linear infinite;
+    background-image: url("/images/background.png");
+    /* for the scrolling dot grid: */
+    /* background-color: var(--bg); */
+    /* background-size: 80px 80px; */
+    /* background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><g fill='black'><circle cx='40' cy='40' r='2'/></g></svg>"); */
+    /* animation: backgroundScroll 120s linear infinite; */
     transition: all 0.4s cubic-bezier(0.85, 0, 0.15, 1);
 }
 
