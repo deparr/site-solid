@@ -2,7 +2,6 @@ import { Meta, Title } from "@solidjs/meta";
 import { useParams } from "@solidjs/router";
 import { createMemo } from "solid-js";
 import blogPosts from "~/generated/rendered-blog-posts";
-import "./blog-post.css";
 
 export default function BlogPage() {
   const params = useParams();

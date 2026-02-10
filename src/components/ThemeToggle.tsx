@@ -28,6 +28,10 @@ export default function ThemeToggle() {
     setTheme((prev) => prev === "dark" ? "light" : "dark");
   };
 
+  const themeIcon = () => {
+    return theme() === "light" ? "sun" : "moon";
+  }
+
   // do this in server-entry.tsx for now
   // useHead({
   //   tag: "script",
@@ -37,6 +41,6 @@ export default function ThemeToggle() {
   // });
 
   return (
-    <button onclick={toggleTheme}>{theme() === "dark" ? "light" : "dark"}</button>
+    <button onclick={toggleTheme}><svg class="toggle-icon"><use href={`/images/icons.svg#${themeIcon()}`} /></svg></button>
   );
 }

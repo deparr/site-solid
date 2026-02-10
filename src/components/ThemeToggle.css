@@ -9,3 +9,9 @@ button {
     text-decoration-line: underline;
     text-decoration-color: var(--link);
 }
+
+svg.toggle-icon {
+    width: 1.2rem;
+    height: 1.2rem;
+    stroke: var(--text);
+}
