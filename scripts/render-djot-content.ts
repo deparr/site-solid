@@ -2,7 +2,7 @@ import { parse, renderHTML, applyFilter, Link, Section, CodeBlock, RawBlock, Ima
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { Language, Parser, Query, QueryCapture } from "web-tree-sitter";
-import { HighlightDef, tresitterDefinitions, TSCaptureGroup } from "./syntax";
+import { HighlightDef, treesitterDefinitions, TSCaptureGroup, HighlightOverride } from "./syntax";
 
 // don't like double declaring types here but
 export interface DjotContent {
@@ -14,11 +14,14 @@ export interface DjotContent {
     date?: string;
 }
 
+type OverrideSet = Partial<Record<TSCaptureGroup, HighlightOverride>>;
+
 interface ParserInfo {
     wasm: string;
     queries?: {
         highlights?: string;
-    }
+    };
+    color_overrides?: OverrideSet,
 };
 const parserSources: Record<string, ParserInfo> = {
     go: {
@@ -46,19 +49,27 @@ const parserSources: Record<string, ParserInfo> = {
             highlights: "https://raw.githubusercontent.com/nvim-treesitter/nvim-treesitter/refs/heads/main/runtime/queries/rust/highlights.scm"
         }
     },
-    // gdscript: {
-    //     wasm: "https://github.com/tree-sitter/tree-sitter-gdscript/releases/download/v0.25.0/tree-sitter-gdscript.wasm",
-    //     queries: {
-    //         highlights: "https://raw.githubusercontent.com/nvim-treesitter/nvim-treesitter/refs/heads/main/queries/gdscript/highlights.scm"
-    //     }
-    // },
-    // gdshader: {
-    //     // todo will need to figure out an easy way to get this
-    //     wasm: "https://github.com/airblast-dev/tree-sitter-gdshader/???",
-    //     queries: {
-    //         highlights: "https://raw.githubusercontent.com/nvim-treesitter/nvim-treesitter/refs/heads/main/queries/gdshader/highlights.scm"
-    //     }
-    // },
+    // TODO: set up a github action or similar to build gdscript and shader remotely and make
+    // them fetchable
+    gdscript: {
+        // this url is invalid
+        wasm: "https://github.com/PrestonKnopp/tree-sitter-gdscript/releases/download/v0.25.0/tree-sitter-gdscript.wasm",
+        queries: {
+            highlights: "https://raw.githubusercontent.com/nvim-treesitter/nvim-treesitter/refs/heads/main/runtime/queries/gdscript/highlights.scm"
+        }
+    },
+    gdshader: {
+        wasm: "https://github.com/airblast-dev/tree-sitter-gdshader",
+        queries: {
+            highlights: "https://raw.githubusercontent.com/nvim-treesitter/nvim-treesitter/refs/heads/main/runtime/queries/gdshader/highlights.scm"
+        },
+        color_overrides: {
+            "constant": {
+                light: treesitterDefinitions.light.variable,
+                dark: treesitterDefinitions.dark.variable,
+            },
+        },
+    },
     // typescript: {
     //     wasm: "https://github.com/tree-sitter/tree-sitter-typescript/releases/download/v0.23.2/tree-sitter-typescript.wasm",
     //     queries: {
@@ -156,8 +167,9 @@ function highlightCode(raw: string, lang: string | undefined): { rendered: strin
     if (!tree || !tree.rootNode) throw new Error(`unable to parse a ${lang} block`);
 
     // TODO for now just copy jolt parsing
-    const rendered: string[] = []
-    const styles = new Set<string>()
+    const rendered: string[] = [];
+    const styles = new Set<string>();
+    const overrides: OverrideSet = parserSources[lang].color_overrides ?? {};
     let linenr = 0;
     let cursor = 0;
     let hlSpanFmt = (group: string, content: string) => (`<span class="${group}">${content}</span>`);
@@ -173,8 +185,10 @@ function highlightCode(raw: string, lang: string | undefined): { rendered: strin
     const rangeWithin = (a: Range, b: Range) => (a[0] == b[0] && a[1] >= b[1] && a[3] <= b[3]);
     let prevRange: Range = [-1, -1, -1, -1];
     for (const c of queries.highlight.captures(tree.rootNode)) {
-        // logCapture(c, raw);
-        const name = c.name;
+        let name = c.name;
+        if (name == "constructor")
+            name = "@" + name;
+        name =  overrides[name as TSCaptureGroup] ? `${name}.${lang}`: name;
         const node = c.node;
         const s = node.startPosition;
         const e = node.endPosition;
@@ -243,7 +257,7 @@ function highlightCode(raw: string, lang: string | undefined): { rendered: strin
 }
 
 function captureToClass(capture: string): string {
-    return `hl-${capture.replaceAll(/\./g, "-")}`;
+    return `hl-${capture.replace("@", "").replaceAll(/\./g, "-")}`;
 }
 
 function htmlEscape(str: string): string {
@@ -369,18 +383,27 @@ export function getAllContent(renderDrafts: boolean): { content: DjotContent[], 
     return { content: pages, highlights };
 }
 
+function getHlOverride(name: string, theme: "light"|"dark"): HighlightDef {
+    const last_dot_idx = name.lastIndexOf('.');
+    const lang = name.slice(last_dot_idx + 1);
+    const group = name.slice(0, last_dot_idx) as TSCaptureGroup;
+    const overrides = parserSources[lang].color_overrides;
+    const override = overrides![group];
+    return override![theme];
+}
+
 function generateHighlightCss(highlights: Set<string>): string {
     const hlCmp = (a: any, b: any) => (a.name == b.name ? 0 : a.name < b.name ? -1 : 1);
     const hlDefinitions = {
-        light: Array.from(highlights.entries(), (v: string[]) => ({ name: v[0], def: tresitterDefinitions.light[v[0] as TSCaptureGroup] })),
-        dark: Array.from(highlights.entries(), (v: string[]) => ({ name: v[0], def: tresitterDefinitions.dark[v[0] as TSCaptureGroup] })),
+        light: Array.from(highlights.entries(), (v: string[]) => ({ name: v[0], def: treesitterDefinitions.light[v[0] as TSCaptureGroup] ?? getHlOverride(v[0], "light") })),
+        dark: Array.from(highlights.entries(), (v: string[]) => ({ name: v[0], def: treesitterDefinitions.dark[v[0] as TSCaptureGroup] ?? getHlOverride(v[0], "dark") })),
     };
     hlDefinitions.light.sort(hlCmp);
     hlDefinitions.dark.sort(hlCmp);
     const lines: string[] = [];
     const transformLine = (entry: { name: string, def: HighlightDef }) => {
         const { name, def } = entry;
-        const line = [`.hl-${name.replaceAll(".", "-").trim()} {`];
+        const line = [`.${captureToClass(name).trim()} {`];
         if (def.fg) line.push(`color: ${def.fg};`);
         if (def.bg) line.push(`background-color: ${def.fg};`);
         if (def.bold) line.push("font-weight: bold;");
@@ -391,8 +414,10 @@ function generateHighlightCss(highlights: Set<string>): string {
         line.push("}");
         lines.push(line.join(" "));
     };
+    lines.push(`pre > code { color: ${treesitterDefinitions.light.variable.fg}; }`)
     hlDefinitions.light.forEach(transformLine);
     lines.push('\n[data-theme="dark"] {')
+    lines.push(`pre > code { color: ${treesitterDefinitions.dark.variable.fg}; }`)
     hlDefinitions.dark.forEach(transformLine);
     lines.push("}");
 

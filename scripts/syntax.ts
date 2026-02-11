@@ -11,7 +11,7 @@ export const colors = {
         red: "#c91142",
     },
     dark: {
-        white: "#d8d8d8",
+        white: "#b8b8b8",
         off_white: "#a8a8a8",
         gray: "#7b7b7b",
         red: "#ac4242",
@@ -34,7 +34,12 @@ export interface HighlightDef {
     strikethrough?: boolean;
 }
 
-export const tresitterDefinitions: Record<"dark" | "light", Record<TSCaptureGroup, HighlightDef>> = {
+export interface HighlightOverride {
+    dark: HighlightDef,
+    light: HighlightDef,
+}
+
+export const treesitterDefinitions: Record<"dark" | "light", Record<TSCaptureGroup, HighlightDef>> = {
     light: {
         "attribute": { fg: colors.light.purple },
         "attribute.builtin": { fg: colors.light.purple },
@@ -50,7 +55,7 @@ export const tresitterDefinitions: Record<"dark" | "light", Record<TSCaptureGrou
         "constant": { fg: colors.light.yellow },
         "constant.builtin": { fg: colors.light.orange },
         "constant.macro": { fg: colors.light.red },
-        "constructor": { fg: colors.light.black },
+        "@constructor": { fg: colors.light.black },
         "diff.delta": { fg: colors.light.cyan },
         "diff.minus": { fg: colors.light.red },
         "diff.plus": { fg: colors.light.green },
@@ -142,7 +147,7 @@ export const tresitterDefinitions: Record<"dark" | "light", Record<TSCaptureGrou
         "constant": { fg: colors.dark.orange },
         "constant.builtin": { fg: colors.dark.orange },
         "constant.macro": { fg: colors.dark.yellow },
-        "constructor": { fg: colors.dark.white },
+        "@constructor": { fg: colors.dark.white },
         "diff.delta": { fg: colors.dark.blue },
         "diff.minus": { fg: colors.dark.red },
         "diff.plus": { fg: colors.dark.green },
@@ -237,7 +242,8 @@ export type TSCaptureGroup =
     "constant" |
     "constant.builtin" |
     "constant.macro" |
-    "constructor" |
+    // I hate javascript man
+    "@constructor" |
     "diff.delta" |
     "diff.minus" |
     "diff.plus" |
