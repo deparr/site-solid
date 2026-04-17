@@ -65,7 +65,7 @@ export default function LittanyPage() {
           alt="A caped stick figure stands and plants a spear trimumphantly at the top of a hill" />
         <button class="joke" onClick={() => {
           setQuery({ against: getRandomTargetKey() });
-        }}>Tech is sucha burden somtimes, man.</button>
+        }}>Tech is such a burden somtimes, man.</button>
       </div>
     </>
   );
