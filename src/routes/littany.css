@@ -13,11 +13,10 @@
     font-weight: bold;
 }
 
-.line {
-}
-
 .that-remains {
     image-rendering: pixelated;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 .joke {

@@ -1,5 +1,5 @@
 import { useSearchParams } from "@solidjs/router";
-import { For } from "solid-js";
+import { createSignal, For } from "solid-js";
 
 import "./littany.css";
 
@@ -25,8 +25,8 @@ Only I will remain`;
 
 function toTitleCase(s: string): string {
   return s.split(" ")
-  .map((x) => x[0].toLocaleUpperCase() + x.slice(1))
-  .join(" ");
+    .map((x) => x[0].toLocaleUpperCase() + x.slice(1))
+    .join(" ");
 }
 
 function getRandomTargetKey(): string {
@@ -44,28 +44,28 @@ function getRandomVerb2(): string {
 
 export default function LittanyPage() {
   const [query, setQuery] = useSearchParams();
-  const targetKey = () => query.against ? query.against : getRandomTargetKey();
-  const key = targetKey() as keyof typeof defaultTargets;
-  const target = key in defaultTargets ? defaultTargets[key].target : key;
-  const verb1 = () => query.verb1 || defaultTargets[key]?.verb1 || getRandomVerb1();
-  const verb2 = () => query.verb2 || defaultTargets[key]?.verb2 || getRandomVerb2();
 
-  setQuery({ against: key });
+  const key = () => (query.against || getRandomTargetKey()) as keyof typeof defaultTargets;
+  const target = () => (key() in defaultTargets ? defaultTargets[key()].target : key()) as string;
+  const verb1 = () => query.verb1 || defaultTargets[key()]?.verb1 || getRandomVerb1();
+  const verb2 = () => query.verb2 || defaultTargets[key()]?.verb2 || getRandomVerb2();
 
-  const fullLittany = littany(target, verb1(), verb2()).split("\n");
+  const fullLittany = () => littany(target(), verb1(), verb2()).split("\n");
   return (
     <>
       <div class="littany">
-        <For each={fullLittany}>{(line, i) => (
-          <span class={i() == fullLittany.length - 1 ? "final-line" : "line"}>{line}</span>
+        <For each={fullLittany()}>{(line, i) => (
+          <span class={i() == fullLittany().length - 1 ? "final-line" : "line"}>{line}</span>
         )}
         </For>
         <img src="/images/that-remains.png"
-        class="that-remains"
-        width={baseImgWidth * 4}
-        height={baseImgHeight * 4}
-        alt="A caped stick figure stands and plants a spear trimumphantly at the top of a hill"/>
-        <p class="joke">Tech is such a burden sometimes, man.</p>
+          class="that-remains"
+          width={baseImgWidth * 4}
+          height={baseImgHeight * 4}
+          alt="A caped stick figure stands and plants a spear trimumphantly at the top of a hill" />
+        <button class="joke" onClick={() => {
+          setQuery({ against: getRandomTargetKey() });
+        }}>Tech is sucha burden somtimes, man.</button>
       </div>
     </>
   );
@@ -149,7 +149,6 @@ const defaultVerb2s = [
   "compulsion to",
   "craving to",
   "desire to",
-  "devotion to",
   "eagerness to",
   "enslavement to",
   "fervor to",
