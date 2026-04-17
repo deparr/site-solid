@@ -7,7 +7,7 @@ export default defineConfig({
         prerender: {
             // this seems to work
             autoSubfolderIndex: false,
-            routes: ["/404"]
+            routes: ["/404", "/littany"]
         },
     }
 });
