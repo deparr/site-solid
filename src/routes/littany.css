@@ -1,0 +1,28 @@
+.littany {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    row-gap: 1em;
+    align-items: center;
+}
+
+.final-line {
+    margin: 0.4rem 0 0.4rem 0;
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.line {
+}
+
+.that-remains {
+    image-rendering: pixelated;
+}
+
+.joke {
+    font-family: var(--sans);
+    font-size: 0.8rem;
+    opacity: 40%;
+}
+
